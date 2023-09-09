@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+
+.product-card{
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.cart-item{
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.cart-summary{
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.product-card .content{
+  transition: transform .3s ease-out;
+}
+
+.product-card:hover .content{
+  transform: translateY(-1rem);
+}
+
+/* For WebKit-based browsers (Chrome, Safari) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
+.slick-dots li {
+  /* Set a fixed width and height to create square boxes */
+  width: 50px !important; /* Adjust this value as per your design */
+  height: 8px !important; /* Should match the width to create squares */
+  margin: 10px;
+  padding: 0;
+  display: inline-block; /* Display the squares in a row */
+  text-align: center; /* Center the button content horizontally */
+  line-height: 40px; /* Center the button content vertically */
+  background-color: #ddd; /* Background color for inactive dots */
+  border-radius: 10px!important;
+  cursor: pointer; /* Add a pointer cursor on hover for interaction */
+  transition: ease-in;
+}
+
+@media screen and (max-width:768px) {
+  .slick-dots li{
+    width: 16px !important; /* Adjust this value as per your design */
+    height: 5px !important;
+    margin: 5px;
+  }
+}
+
+
+.slick-dots li.slick-active {
+  /* Style for the active dot (you can customize this) */
+  background-color: #007bff; /* Change to your desired active color */
+  color: #fff; /* Change text color for active dot */
+}
+
+.slick-dots li button::before{
+    content: ' ' !important;
+    width: 100% !important;
+    height: 10px !important;
+    
+  }
+
+  .slick-dots li button{
+    height: 10px !important;
+    width: 100% !important;
+}
