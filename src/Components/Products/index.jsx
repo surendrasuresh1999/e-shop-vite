@@ -7,7 +7,7 @@ import ProductCard from '../ProductCard'
 import {HiChevronDoubleUp} from 'react-icons/hi'
 import { Filters } from './filters'
 import { mens_kurta } from '../../data'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material'
 const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
@@ -356,7 +356,9 @@ export default function Products() {
               <div className="lg:col-span-3">
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8'>
                     {mens_kurta.map((product,index) => (
-                     <ProductCard key={index} data={product} /> 
+                      <Link to={`/products/${1}`}>
+                        <ProductCard key={index} data={product} /> 
+                     </Link>
                     ))}
                 </div>
               </div>
