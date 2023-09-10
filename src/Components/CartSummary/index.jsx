@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 
 const CartSummary = () => {
   const step = useSelector((state) => state.initialStep)
-  console.log("helllo world",step)
+  // console.log("helllo world",step)
     // const context = useContext(userContext)
 
     // const numberToWords = (number) => {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
@@ -73,7 +73,7 @@ export default function AddressComponent() {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     let userAddressObj = {...formData,id:addressArray.length+1}
-    setAddressArray(userAddressObj)
+    setAddressArray((prevAddressArray) => [...prevAddressArray, userAddressObj]);
     setFormData({
       firstName:"",
       lastName:"",
@@ -101,6 +101,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 id="first-name"
                 name="firstName"
+                value={formData.firstName}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -116,6 +117,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 id="last-name"
                 name="lastName"
+                value={formData.lastName}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -131,6 +133,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 name="address"
                 id="address"
+                value={formData.address}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -146,6 +149,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 name="city"
                 id="city"
+                value={formData.city}
                 autoComplete="address-level2"
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
@@ -161,7 +165,7 @@ export default function AddressComponent() {
                 id="country"
                 onChange={handleOnchange}
                 name="country"
-                autoComplete="country-name"
+                value={formData.country}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
                 {
@@ -183,7 +187,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 name="state"
                 id="state"
-                autoComplete="address-level1"
+                value={formData.state}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -199,7 +203,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 name="postalCode"
                 id="postal-code"
-                autoComplete="postal-code"
+                value={formData.postalCode}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -215,7 +219,7 @@ export default function AddressComponent() {
                 onChange={handleOnchange}
                 name="phone"
                 id="phone"
-                autoComplete="tel"
+                value={formData.phone}
                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -236,7 +240,6 @@ export default function AddressComponent() {
             Cancel
           </button>        
         </form>
-        
       </div>
     )
   }
