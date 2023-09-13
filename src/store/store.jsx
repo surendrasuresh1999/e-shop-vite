@@ -1,18 +1,11 @@
-import { configureStore,createSlice } from "@reduxjs/toolkit";
+import { applyMiddleware, legacy_createStore,combineReducers } from "redux";
+import thunk from "redux-thunk";
+import { authReducer } from "./Auth/reducer";
+import { customerProductReducer } from "./Product/reducer";
 
-const stepperSlice = createSlice({
-    name:"stepper",
-    initialState:{initialStep:2},
-    reducers:{
-        Next(state,action){
-            ++state.initialStep
-        },
-        Back(state,action){
-            --state.initialStep
-        }
-    }
+const rootReducers = combineReducers({
+    auth:authReducer,
+    store:customerProductReducer,
 })
-export const actions = stepperSlice.actions;
-export const store = configureStore({
-    reducer: stepperSlice.reducer
-})
+
+export const store = legacy_createStore(rootReducers,applyMiddleware(thunk))

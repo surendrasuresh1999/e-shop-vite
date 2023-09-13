@@ -1,7 +1,7 @@
 import { CheckIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { actions } from '../../store/store';
+
 import { useDispatch, useSelector } from 'react-redux';
 import AddressComponent from '../AddressCompnent';
 import OrderSummary from '../OrderSummary';
@@ -29,13 +29,13 @@ export default function CheckOut() {
     const handleNextStepper = () => {
         const nextStep = Number(activeStep) + 1;
         initialActiveStep++
-        dispatch(actions.Next())
+        // dispatch(actions.Next())
         setActiveStep(String(nextStep)); // Update the active step
         // updateURL(nextStep);
     }
 
     const handleBackStepper = () => {
-        dispatch(actions.Back())
+        // dispatch(actions.Back())
         const prevStep = Number(activeStep) - 1;
         setActiveStep(String(prevStep)); // Update the active step
         // updateURL(prevStep);
@@ -105,7 +105,8 @@ export default function CheckOut() {
       </ol>
     </nav>
     <section>
-        { step === 2 ? <AddressComponent/> : <OrderSummary /> }
+      <AddressComponent/>
+        {/* { step === 2 ? <AddressComponent/> : <OrderSummary /> } */}
     </section>
     <div className='flex gap-6'>
     <button

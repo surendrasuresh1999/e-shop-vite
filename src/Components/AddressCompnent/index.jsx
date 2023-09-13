@@ -4,6 +4,9 @@ import { CheckCircleIcon, TrashIcon } from '@heroicons/react/20/solid'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import address from "../../assets/no-address.svg";
+import {AiOutlineDelete} from "react-icons/ai";
+import {BiSolidEdit} from "react-icons/bi";
+
 
 const products = [
   {
@@ -49,6 +52,10 @@ const projects = [
   { name: 'Graph API', initials: 'GA', href: '#', members: 16, bgColor: 'bg-pink-600' },
 ]
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
+
 export default function AddressComponent() {
   const [showForm,setShowForm] = useState(false)
   const [formData,setFormData] = useState({
@@ -62,6 +69,12 @@ export default function AddressComponent() {
     phone:"",
   })
   const [addressArray, setAddressArray] = useState([]); 
+  const [selectedMailingLists, setSelectedMailingLists] = useState([
+    { id: 1, title: 'Newsletter', description: 'Last message sent an hour ago', users: '621 users' },
+    { id: 2, title: 'Existing Customers', description: 'Last message sent 2 weeks ago', users: '1200 users' },
+    { id: 3, title: 'Trial Users', description: 'Last message sent 4 days ago', users: '2740 users' },
+  ])
+
 
   const handleOnchange = (e) => {
     setFormData({
@@ -227,7 +240,7 @@ export default function AddressComponent() {
 
           <button
             type="submit"
-            className="rounded-md bg-indigo-50 px-3.5 py-2.5 text-sm font-semibold text-indigo-600 hover:text-white shadow-sm hover:bg-indigo-500"
+            className="rounded-md bg-indigo-50 px-3.5 py-2.5 border-blue-500 border text-sm font-semibold text-indigo-600 hover:text-white shadow-sm hover:bg-indigo-500"
             >
             Save
           </button>
@@ -244,42 +257,41 @@ export default function AddressComponent() {
     )
   }
 
+  const handleDeleteAddress = (id) => {
+    const filteredAdress = selectedMailingLists.filter((address)=>address.id !== id)
+    setSelectedMailingLists(filteredAdress)
+  }
+
   const renderAddressCard = () => {
-    return(
-      <div>
-        <ul role="list" className="divide-y divide-gray-200">
-          {projects.map((project,index) => (
-            <li key={index} className="flex px-4 py-6 sm:px-6">
-            <div className="flex-shrink-0">
-              <img src="https://rukminim1.flixcart.com/image/612/612/l5h2xe80/kurta/x/6/n/xl-kast-tile-green-majestic-man-original-imagg4z33hu4kzpv.jpeg?q=70" alt="surendra" className="w-20 rounded-md" />
-            </div>
 
-            <div className="ml-6 flex flex-1 flex-col">
-              <div className="flex">
-                <div className="min-w-0 flex-1">
-                  <h4 className="text-medium font-medium text-gray-700 hover:text-gray-800">
-                    Surendra parla kuruva
-                  </h4>
-                  <p className="mt-1 text-sm text-gray-500">address here....</p>
-                  <p className="mt-1 text-sm text-gray-500">cell no.....</p>
-                  <p className="mt-1 text-sm text-gray-500">pincode here.....</p>
-                </div>
-
-                <div className="ml-4 flow-root flex-shrink-0">
-                  <button
-                    type="button"
-                    className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-gray-400 hover:text-gray-500"
-                  >
-                    <span className="sr-only">Remove</span>
-                    <TrashIcon className="h-5 w-5" aria-hidden="true" />
+    return (
+      <>
+        {
+          selectedMailingLists.map((data)=>(
+            <div className='px-3 py-3' key={data.id}>
+            <div className='rounded-lg border border-gray-200 pt-2'>
+              <div className='px-2 pb-2'>
+                <div className='flex justify-between items-start'>
+                  <h3 className='text-gray-800 font-medium text-base'>Deliver to: Surendra parla kuruva</h3>
+                  <button onClick={()=>handleDeleteAddress(data.id)}>
+                    <AiOutlineDelete className='h-4 w-4' fill='red'/>
                   </button>
                 </div>
+                <p className='text-gray-800 font-medium text-base'>address will display here</p>
+                <p className='text-gray-800 font-medium text-base'>7997856276</p>
+              </div>          
+              <div className='border-t border-gray-200 flex items-center justify-between px-2 py-2'>
+                <div className='flex items-center gap-2'>
+                  <input type="radio" id={`choose${data.id}`} name="addressSelection"/>
+                  <label htmlFor={`choose${data.id}`} className='text-gray-800 font-medium cursor-pointer text-base'>Choose</label>
+                </div>
+                <BiSolidEdit className='h-4 w-4' fill='green'/>
               </div>
             </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+          </div>
+          ))
+        }
+      </>
     )
   }
 

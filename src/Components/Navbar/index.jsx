@@ -1,7 +1,8 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Popover, Menu, Tab, Transition } from '@headlessui/react';
+import { CheckCircleIcon, EllipsisVerticalIcon } from '@heroicons/react/20/solid'
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   ArchiveBoxIcon,
   ArrowRightCircleIcon,
@@ -12,8 +13,16 @@ import {
 } from '@heroicons/react/20/solid';
 import { FiLogOut } from "react-icons/fi";
 import { BiPackage } from 'react-icons/bi';
+import SlideOverProfile from './slideOverProfile';
+import { useNavigate } from 'react-router-dom';
+import LogoutModal from './logoutModal';
+import LoginForm from './loginForm';
+import RegisterForm from './registerForm';
+import { useSelector } from 'react-redux';
+import { LogIn, UserCircle2 } from 'lucide-react';
 
 const currencies = ['CAD', 'USD', 'AUD', 'EUR', 'GBP']
+
 const navigation = {
   categories: [
     {
@@ -80,9 +89,9 @@ const navigation = {
 }
 
 const userProfile = [
-  {id:1, label: 'Profile', icon: <UserIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />,path:"profile" },
-  {id:2, label: 'My Orders', icon: <BiPackage className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />,path:"orders" },
-  {id:3, label: 'Logout', icon: <FiLogOut className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />,path:"logout" },
+  { id: 1, label: 'Profile', icon: <UserIcon className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />, path: "profile" },
+  { id: 2, label: 'My Orders', icon: <BiPackage className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />, path: "orders" },
+  { id: 3, label: 'Logout', icon: <FiLogOut className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />, path: "logout" },
 ]
 
 function classNames(...classes) {
@@ -90,14 +99,75 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+  const jwtToken = localStorage.getItem("jwtToken");
+  const { auth } = useSelector(store => store);
+
   const [open, setOpen] = useState(false)
+  const [slideOverStatus, setSlideOverStatus] = useState(false);
+  const [logoutPopup, setLogoutPopup] = useState(false);
+  const [openRegisterForm, setopenRegisterForm] = useState(false);
+  const [openLoginForm, setopenLoginForm] = useState(false);
+  const [isUserLoggedIn, setIsLoggedIn] = useState(false);
+
+  const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const closeSlideOverProfile = (status) => {
+    setSlideOverStatus(status)
+  }
+
+  const closeLogoutPopup = (status) => {
+    setLogoutPopup(status)
+  }
+
+  const closeRegisterPopup = (status) => {
+    setopenRegisterForm(status)
+    navigate("/");
+  }
+
+  const closeLoginPopup = (status) => {
+    setopenLoginForm(status)
+    navigate("/");
+  }
+
+  const handleProfile = (id) => {
+    console.log(typeof id)
+    switch (id) {
+      case 1:
+        return setSlideOverStatus(true)
+      case 2:
+        return navigate("/orders")
+      default:
+        return setLogoutPopup(true);
+    }
+  }
+
+  const openLoginFormStatus = (status) => {
+    setopenLoginForm(status)
+    navigate("/login")
+  }
+
+  const openRegisterFormStatus = (status) => {
+    setopenRegisterForm(status)
+  }
+
+  useEffect(() => {
+    if (jwtToken !== null) {
+      setIsLoggedIn(true)
+    }
+    else {
+      setIsLoggedIn(false)
+    }
+  }, [jwtToken, auth.user])
+
 
   // user profile drop down action function
   const userInfo = () => (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-gray-200 p-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-300">
-          <UserIcon className="h-5 w-5" aria-hidden="true" />
+        <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full p-2 shadow-sm">
+          <UserCircle2 size={30} color="#13e721" strokeWidth={1.25} />
         </Menu.Button>
       </div>
 
@@ -115,17 +185,17 @@ export default function Navbar() {
             {userProfile.map((item) => (
               <Menu.Item key={item.id}>
                 {({ active }) => (
-                  <Link to={`/${item.path}`}>
-                    <button
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'group flex items-center px-4 py-2 text-sm w-full'
-                      )}
-                    >
-                      {item.icon}
-                      {item.label}
-                    </button>
-                    </Link>
+                  <button
+                    onClick={() => handleProfile(item.id)}
+                    className={classNames(
+                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                      'group flex items-center px-4 py-2 text-sm w-full'
+                    )}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+
                 )}
               </Menu.Item>
             ))}
@@ -135,6 +205,10 @@ export default function Navbar() {
     </Menu>
   );
 
+  const handleSignUpAndLogin = () => {
+    setopenRegisterForm(true)
+    navigate("/register");
+  }
 
   return (
     <div className="bg-white sticky top-0 z-[50]">
@@ -519,11 +593,18 @@ export default function Navbar() {
                           <MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
                         </a>
                       </div>
-                      <div>
-                        {
-                          userInfo()
+                      <>
+                        {isUserLoggedIn ? userInfo() : <button type="button" onClick={handleSignUpAndLogin}>
+                          <LogIn size={35} color="#7b7a7f" strokeWidth={1.25} className="-ml-0.5 h-5 w-5" />
+                        </button>
                         }
-                      </div>
+                      </>
+                      {/* the below component is slid profile information */}
+                      <SlideOverProfile status={slideOverStatus} profile={auth.user} closeFun={closeSlideOverProfile} />
+
+                      <LogoutModal status={logoutPopup} closeFun={closeLogoutPopup} />
+
+                      {location.pathname === "/login" ? <LoginForm status={openLoginForm} openRegister={openRegisterFormStatus} closeFun={closeLoginPopup} /> : <RegisterForm status={openRegisterForm} openLogin={openLoginFormStatus} closeFun={closeRegisterPopup} />}
                     </div>
 
                     <span className="mx-4 h-6 w-px bg-gray-200 lg:mx-6" aria-hidden="true" />

@@ -185,15 +185,15 @@ export default function OrdersComponent() {
                           <div className="py-1">
                             <Menu.Item>
                               {({ active }) => (
-                                <a
-                                  href={order.href}
+                                <Link
+                                  to={`/orders/${2}`}
                                   className={classNames(
                                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                     'block px-4 py-2 text-sm'
                                   )}
                                 >
                                   View
-                                </a>
+                                </Link>
                               )}
                             </Menu.Item>
                             <Menu.Item>

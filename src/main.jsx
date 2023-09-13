@@ -9,12 +9,13 @@ import { store } from './store/store.jsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
+  
   <React.StrictMode>
     <BrowserRouter>
+    <Provider store={store}>
       <App />
+      <Footer />
+    </Provider>
     </BrowserRouter>
-    <Footer />
   </React.StrictMode>
-  </Provider>,
 )
