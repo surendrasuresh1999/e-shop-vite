@@ -4,10 +4,12 @@ import { QuestionMarkCircleIcon, XMarkIcon as XMarkIconMini } from '@heroicons/r
 import {BiRupee} from 'react-icons/bi'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { Minus } from 'lucide-react'
 // import { userContext } from '@/app/layout'
 
-const CartSummary = () => {
-  const step = useSelector((state) => state.initialStep)
+const CartSummary = (props) => {
+  const {discount,price,btnText} = props.summary
+
   // console.log("helllo world",step)
     // const context = useContext(userContext)
 
@@ -57,9 +59,11 @@ const CartSummary = () => {
     //     return formattedNumber ? formattedNumber : 'zero';
     // };
         
-    
+    // console.log(price)
     // const orderTotal = context.Amount + context.shippingCharges + context.taxEstimation
     // const amountInWords = numberToWords(orderTotal);
+    const tax = 20;
+    const shippingCharges = 100
   return (
     <section className='rounded-lg bg-gray-50 px-4 py-4 cart-summary'>
     <h2 id="summary-heading" className="text-lg font-medium text-gray-900">
@@ -69,15 +73,17 @@ const CartSummary = () => {
     <dl className="mt-6 space-y-4">
       <div className="flex items-center justify-between">
         <dt className="text-sm text-gray-600">Subtotal</dt>
-        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>200</dd>
+        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>{price}</dd>
       </div>
+    
       <div className="flex items-center justify-between border-t border-gray-200 pt-4">
         <dt className="flex items-center text-sm text-gray-600">
           <span>Shipping Charges</span>
           <QuestionMarkCircleIcon className="h-5 w-5 ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500" aria-hidden="true" />
         </dt>
-        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>100</dd>
+        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>{shippingCharges}</dd>
       </div>
+
       <div className="flex items-center justify-between border-t border-gray-200 pt-4">
         <dt className="flex text-sm text-gray-600">
           <span>Tax estimate</span>
@@ -86,26 +92,33 @@ const CartSummary = () => {
             <QuestionMarkCircleIcon className="h-5 w-5" aria-hidden="true" />
           </a>
         </dt>
-        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>20</dd>
+        <dd className="text-sm font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>{tax}</dd>
       </div>
+
+      <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+        <dt className="flex items-center text-sm text-gray-600">
+          <span>Discount</span>
+        </dt>
+        <dd className="text-sm font-bold text-green-500 flex items-center">
+        <Minus size={15} color="#49e147" strokeWidth={3} /><BiRupee className='font-bold'/>{discount}
+        </dd>
+      </div>
+
       <div className="flex items-center justify-between border-t border-gray-200 pt-4">
         <dt className="text-base font-medium text-gray-900">Order total</dt>
-        <dd className="text-base font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>5000</dd>
+        <dd className="text-base font-bold text-gray-900 flex items-center"><BiRupee className='font-bold'/>{
+          price+tax+shippingCharges - discount
+        }</dd>
       </div>
-      {/* {amountInWords !== 'zero' ? <div className="flex items-center border-t border-gray-200 pt-4">
-      <dt className="text-sm font-medium text-gray-900">**In words:</dt>
-      <dd className="text-sm font-medium text-gray-900 flex items-center ml-1">five thousand</dd>
-    </div> : ''} */}
-      
     </dl>
 
     <div className="mt-6">
-      <Link to={`/checkout?step=${step}`}>
+      <Link to={`/checkout`}>
       <button
         type="button"
         className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
-        Checkout
+        {btnText}
       </button>
       </Link>
     </div>

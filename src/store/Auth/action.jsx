@@ -17,7 +17,6 @@ export const register = (userData)=> async(dispatch) => {
         if(user.jwt){
             localStorage.setItem("jwtToken",user.jwt)
         }
-        console.log("hello ===========>",user)
     dispatch(registerSuccess(user.jwt));
 
     } catch (error) {

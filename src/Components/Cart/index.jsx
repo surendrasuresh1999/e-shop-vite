@@ -2,44 +2,21 @@
 import { CheckIcon, ClockIcon, QuestionMarkCircleIcon, XMarkIcon } from '@heroicons/react/20/solid'
 import CartItem from '../CartItem'
 import CartSummary from '../CartSummary'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { getUserCart } from '../../store/Cart/action'
 
-const products = [
-  {
-    id: 1,
-    name: 'Basic Tee',
-    href: '#',
-    price: '$32.00',
-    color: 'Sienna',
-    inStock: true,
-    size: 'Large',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in sienna.",
-  },
-  {
-    id: 2,
-    name: 'Basic Tee',
-    href: '#',
-    price: '$32.00',
-    color: 'Black',
-    inStock: false,
-    leadTime: '3–4 weeks',
-    size: 'Large',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-02.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
-  },
-  {
-    id: 3,
-    name: 'Nomad Tumbler',
-    href: '#',
-    price: '$35.00',
-    color: 'White',
-    inStock: true,
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-03.jpg',
-    imageAlt: 'Insulated bottle with white base and black snap lid.',
-  },
-]
 
 export default function Cart() {
+  const dispatch = useDispatch();
+  const {cart} = useSelector(store => store);
+  // console.log("cart page",data)
+  useEffect(()=>{
+    
+    dispatch(getUserCart())
+    console.log("user cart",cart)
+  },[cart.removeCartItem,cart.updateCartItem])
+
   return (
     <div className="bg-white pt-6 md:pt-10">
       <div className='px-1 lg:px-0'>
@@ -53,8 +30,8 @@ export default function Cart() {
             </h2>
 
             <ul role="list">
-              {[1,1,1].map((product, productIdx) => (
-                <CartItem key={productIdx}/>
+              {cart && cart?.cartItems[0]?.map((product, productIdx) => (
+                <CartItem data={product} key={productIdx}/>
               ))}
             </ul>
           </section>
@@ -64,7 +41,7 @@ export default function Cart() {
             aria-labelledby="summary-heading"
             className="lg:col-span-5 py-4"
           >
-            <CartSummary />
+            <CartSummary summary={{discount:cart?.cart?.discount,price:cart?.cart?.totalPrice,btnText:"Checkout"}}/>
           </section>
         </div>
       </div>

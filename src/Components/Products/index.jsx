@@ -7,8 +7,10 @@ import ProductCard from '../ProductCard'
 import {HiChevronDoubleUp} from 'react-icons/hi'
 import { Filters } from './filters'
 import { mens_kurta } from '../../data'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { FormControl, FormControlLabel, FormLabel, Pagination, Radio, RadioGroup } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { findProducts } from '../../store/Product/action'
 const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
   { name: 'Price: High to Low', href: '#', current: false },
@@ -61,7 +63,41 @@ export default function Products() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false);
   const location = useLocation();
+  const param = useParams();
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const {product} = useSelector(store => store)
+  const decodedQueryString = decodeURIComponent(location.search);
+  const searchParams = new URLSearchParams(decodedQueryString);
+  const colorValue = searchParams.get("color");
+  const sizeValue = searchParams.get("size");
+  const priceValue = searchParams.get("price");
+  const discount = searchParams.get("discount");
+  const sortValue = searchParams.get("sort");
+  const pageNumber = searchParams.get("page") || 1;
+  const stock = searchParams.get("stock");
+
+  useEffect(()=>{
+
+  const [minPrice,maxPrice] = priceValue === null ? [0,10000]:priceValue.split("-").map(Number);
+  
+  const data ={
+    category:param.levelthree,
+    colors:colorValue || [],
+    sizes:sizeValue | [],
+    minPrice,
+    maxPrice,
+    minDiscount:discount || 0,
+    sort:sortValue || "price_low",
+    pageNumber: pageNumber - 1,
+    pageSize:1,
+    stock:stock
+  }
+
+  dispatch(findProducts(data))
+
+},[param.levelthree,colorValue,sizeValue,priceValue,discount,sortValue,pageNumber,stock])
 
   useEffect(()=>{
     const handleScroll = () => {
@@ -155,6 +191,12 @@ export default function Products() {
     )
   }
 
+  const handlePagination = (e,value) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page",value);
+    const query = searchParams.toString();
+    navigate({search:`${query}`})
+  }
   return (
     <div className="bg-white">
       
@@ -355,11 +397,14 @@ export default function Products() {
               {/* Product grid */}
               <div className="lg:col-span-3">
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8'>
-                    {mens_kurta.map((product,index) => (
-                      <Link to={`/products/${1}`}>
+                    {product.products && product.products?.content?.map((product,index) => (
+                      <Link to={`/products/${product._id}`} key={index}>
                         <ProductCard key={index} data={product} /> 
                      </Link>
                     ))}
+                </div>
+                <div className='my-6 flex justify-center items-center border border-blue-300 rounded-lg py-3 shadow-md'>
+                  <Pagination count={5} color="primary" onChange={handlePagination}/>
                 </div>
               </div>
             </div>
@@ -371,4 +416,5 @@ export default function Products() {
       </div>
     </div>
   )
+  
 }

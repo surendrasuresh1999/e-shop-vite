@@ -3,15 +3,18 @@ import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../store/Auth/action'
+import { useNavigate } from 'react-router-dom'
+
 
 const LogoutModal = (props) => {
 //   const [open, setOpen] = useState(true)
 const dispatch = useDispatch();
 //   const cancelButtonRef = useRef(null)
-
+const navigate = useNavigate();
 const handleLogout = () => {
   dispatch(logout())
   props.closeFun(false)
+  navigate("/")
 }
 
   return (

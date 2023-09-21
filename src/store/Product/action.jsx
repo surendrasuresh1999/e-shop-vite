@@ -5,14 +5,20 @@ export const findProducts = (reqData) => async(dispatch) => {
     dispatch({type:FIND_PRODUCTS_REQUEST})
     
     const {colors,sizes,maxPrice,minPrice,minDiscount,category,stock,sort,pageNumber,pageSize} = reqData;
-    
+
     try {
 
-        const {data} = api.get(`/api/products/color=${colors}&size=${sizes}&maxPrice=${maxPrice}&minPrice=${minPrice}&minDiscount=${minDiscount}&category=${category}&stock=${stock}&sort=${sort}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+        const {data} = await api.get(`/api/products?category=${category}`)
 
+        // const {data} = await api.get(`/api/products?category=${category}&color=${colors}&size=${sizes}&minPrice=${minPrice}&maxPrice=${maxPrice}&minDiscount=${minDiscount}&stock=${stock}&sort=${sort}&pageNumber=${pageNumber}&pageSize=${pageSize}`)
+
+        console.log("products data in redux=========>", data)
+        
+        
         dispatch({type:FIND_PRODUCTS_SUCCESS,payload:data})
         
     } catch (error) {
+        // console.log("error logged",error)
         dispatch({type:FIND_PRODUCTS_FAILURE,payload:error.message})
     }
 }
@@ -20,11 +26,11 @@ export const findProducts = (reqData) => async(dispatch) => {
 export const findProductsById = (reqData) => async(dispatch) => {
     dispatch({type:FIND_PRODUCT_BY_ID_REQUEST})
     
-    const {productId} = reqData;
-    
+    const productId = reqData;
+
     try {
 
-        const {data} = api.get(`/api/products/id/${productId}`)
+        const {data} = await api.get(`/api/products/${productId}`)
 
         dispatch({type:FIND_PRODUCT_BY_ID_SUCCESS,payload:data})
         

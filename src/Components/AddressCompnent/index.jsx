@@ -6,21 +6,10 @@ import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import address from "../../assets/no-address.svg";
 import {AiOutlineDelete} from "react-icons/ai";
 import {BiSolidEdit} from "react-icons/bi";
-
-
-const products = [
-  {
-    id: 1,
-    title: 'Basic Tee',
-    href: '#',
-    price: '$32.00',
-    color: 'Black',
-    size: 'Large',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/checkout-page-02-product-01.jpg',
-    imageAlt: "Front of men's Basic Tee in black.",
-  },
-  // More products...
-]
+import AddressCard from '../AddressCard/address';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectDeliveryAddress } from '../../store/Addressess/action';
+import { createOrder } from '../../store/Order/action';
 
 const countrys = [
   {
@@ -46,15 +35,7 @@ const countrys = [
 
 ]
 
-const projects = [
-  { name: 'Graph API', initials: 'GA', href: '#', members: 16, bgColor: 'bg-pink-600' },
-  { name: 'Graph API', initials: 'GA', href: '#', members: 16, bgColor: 'bg-pink-600' },
-  { name: 'Graph API', initials: 'GA', href: '#', members: 16, bgColor: 'bg-pink-600' },
-]
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export default function AddressComponent() {
   const [showForm,setShowForm] = useState(false)
@@ -75,6 +56,25 @@ export default function AddressComponent() {
     { id: 3, title: 'Trial Users', description: 'Last message sent 4 days ago', users: '2740 users' },
   ])
 
+  const {auth} = useSelector(store => store);
+
+  const dispatch = useDispatch();
+
+
+  const handleAddressSelection = (data) => {
+    const address = {
+      firstName:data.firstName,
+      lastName:data.lastName,
+      streetAddress:data.streetAddress,
+      city:data.city,
+      state:data.state,
+      zipCode:data.zipCode,
+      mobile:data.mobile,
+    }
+    // console.log(defracture)
+    dispatch(selectDeliveryAddress(address))
+    // dispatch(createOrder(address))
+  };
 
   const handleOnchange = (e) => {
     setFormData({
@@ -101,7 +101,7 @@ export default function AddressComponent() {
 
   const renderAddressForm = () => {
     return(
-      <div>
+      <div className='py-8 lg:py-0'>
         <h2 className="text-lg md:text-2xl font-medium text-gray-900">Shipping information</h2>
         <form className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4" onSubmit={(e) => handleFormSubmit(e)}>
           <div>
@@ -263,32 +263,31 @@ export default function AddressComponent() {
   }
 
   const renderAddressCard = () => {
-
     return (
       <>
         {
-          selectedMailingLists.map((data)=>(
-            <div className='px-3 py-3' key={data.id}>
-            <div className='rounded-lg border border-gray-200 pt-2'>
-              <div className='px-2 pb-2'>
-                <div className='flex justify-between items-start'>
-                  <h3 className='text-gray-800 font-medium text-base'>Deliver to: Surendra parla kuruva</h3>
-                  <button onClick={()=>handleDeleteAddress(data.id)}>
+          auth?.user?.address.map((data)=>(
+            <div className='px-3 py-3' key={data._id}>
+              <div className='rounded-lg border border-gray-200 pt-2'>
+                <div className='px-2 pb-2'>
+                  <div className='flex justify-between items-start'>
+                    <h3 className='text-gray-800 font-medium text-base'>{data.firstName}{" "}{data.lastName}</h3>
+                    
+                  </div>
+                  <p className='text-gray-800 font-medium text-base'>{data.streetAddress},{" "}{data.zipCode},{" "}{data.state}</p>
+                  <p className='text-gray-800 font-medium text-base'>{data.mobile}</p>
+                </div>          
+                <div className='border-t border-gray-200 flex items-center justify-between px-2 py-2'>
+                  <div className='flex items-center gap-2 bg-gray-200 py-2 px-1 rounded-md'>
+                    <input type="radio" id={`choose${data._id}`} name="addressSelection" onChange={() => handleAddressSelection(data)}/>
+                    <label htmlFor={`choose${data._id}`} className='text-gray-800 font-medium cursor-pointer text-base'>Deliver Here</label>
+                  </div>
+                  <button onClick={()=>handleDeleteAddress(data._id)}>
                     <AiOutlineDelete className='h-4 w-4' fill='red'/>
                   </button>
                 </div>
-                <p className='text-gray-800 font-medium text-base'>address will display here</p>
-                <p className='text-gray-800 font-medium text-base'>7997856276</p>
-              </div>          
-              <div className='border-t border-gray-200 flex items-center justify-between px-2 py-2'>
-                <div className='flex items-center gap-2'>
-                  <input type="radio" id={`choose${data.id}`} name="addressSelection"/>
-                  <label htmlFor={`choose${data.id}`} className='text-gray-800 font-medium cursor-pointer text-base'>Choose</label>
-                </div>
-                <BiSolidEdit className='h-4 w-4' fill='green'/>
               </div>
             </div>
-          </div>
           ))
         }
       </>
@@ -312,12 +311,12 @@ export default function AddressComponent() {
         
           {/* Order summary */}
           <div className="mt-10 lg:mt-0">
-            <h2 className="text-lg md:text-2xl font-medium text-gray-900">Your Address</h2>
+            <h2 className="text-lg md:text-2xl font-medium text-gray-900">Your Saved Address</h2>
             
             <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
               <h3 className="sr-only">Items in your cart</h3>
               {
-                addressArray.length !== 0 ? renderAddressCard() : renderNoAddress()
+                auth?.user?.address?.length !== 0 ? renderAddressCard() : renderNoAddress()
               }
             </div>
           </div>

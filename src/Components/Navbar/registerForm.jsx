@@ -33,7 +33,6 @@ const RegisterForm = (props) =>  {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    // console.log("registered data========>",formData)
     dispatch(register(formData))
     props.closeFun(false)
     navigate("/");

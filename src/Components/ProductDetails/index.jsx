@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { RadioGroup } from '@headlessui/react'
 import ProductCard from '../ProductCard'
 import { mens_kurta } from '../../data'
+import { useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { findProductsById } from '../../store/Product/action'
+import { addItemToCart } from '../../store/Cart/action'
 
-const product = {
+const productDetails = {
   name: 'Basic Tee 6-Pack',
   price: '192',
   href: '#',
@@ -56,6 +60,7 @@ const product = {
   details:
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 }
+
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
 function classNames(...classes) {
@@ -63,15 +68,30 @@ function classNames(...classes) {
 }
 
 export default function ProductDetails() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+  const [selectedSize, setSelectedSize] = useState("M")
+  
+  const value = useParams();
+  const dispatch = useDispatch();
+
+  const {product} = useSelector(store => store)
+  useEffect(()=>{
+    // console.log(value.id)
+    dispatch(findProductsById(value.id))
+
+  },[value.id])
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const data = {productId:value.id,size:selectedSize}
+    dispatch(addItemToCart(data))
+  }
 
   return (
     <div className="bg-white">
       <div className="pt-6">
         <nav aria-label="Breadcrumb">
           <ol role="list" className="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-            {product.breadcrumbs.map((breadcrumb) => (
+            {productDetails.breadcrumbs.map((breadcrumb) => (
               <li key={breadcrumb.id}>
                 <div className="flex items-center">
                   <a href={breadcrumb.href} className="mr-2 text-sm font-medium text-gray-900">
@@ -91,41 +111,39 @@ export default function ProductDetails() {
               </li>
             ))}
             <li className="text-sm">
-              <a href={product.href} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
-                {product.name}
+              <a href={productDetails.href} aria-current="page" className="font-medium text-gray-500 hover:text-gray-600">
+                {productDetails.name}
               </a>
             </li>
           </ol>
         </nav>
-        <section className='grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-10 py-4'>
+        <section className='grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-10 py-10'>
           {/* Image gallery */}
-          <div>
-            <div className="aspect-h-4 aspect-w-3 max-h-[40rem] lg:max-w-[40rem] overflow-hidden rounded-lg">
+          <div className="overflow-hidden flex justify-center rounded-lg">
               <img
-                src={product.images[0].src}
-                alt={product.images[0].alt}
-                className="h-full w-full object-cover object-center"
+                src={product?.product?.imageUrl}
+                alt="product image"
+                className="h-full w-full md:h-[500px] md:w-[450px] rounded-md"
               />
             </div>
-          </div>
 
           {/* Product info */}
           <div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-[#3e4c59] sm:text-3xl">{product.name}</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-[#3e4c59] sm:text-3xl">{product?.product?.title}</h1>
               <div className="my-2 flex items-center">
                 <p className='text-[#171F46] font-bold text-lg'>Brand:</p>
-                <p className="ml-2 text-base font-semibold text-gray-500">Surendra</p>
+                <p className="ml-2 text-base font-semibold text-gray-500">{product?.product?.brand}</p>
               </div>
             </div>
 
             {/* Options */}
             <div className="lg:row-span-3 lg:mt-0">
               <h2 className="sr-only">Product information</h2>
-              <div className='flex items-center gap-3 my-4'>
-                <p className="text-3xl tracking-tight text-[#171f46]">₹{product.price}</p>
-                <p className="text-3xl tracking-tight text-[#b0b0b4] line-through">₹{product.price}</p>
-                <p className="text-3xl tracking-tight text-green-500 ">₹{product.price}</p>
+              <div className='flex items-center gap-3 md:gap-8 my-4'>
+                <p className="text-3xl tracking-tight text-[#171f46]">₹{product?.product?.price}</p>
+                <p className="text-3xl tracking-tight text-[#b0b0b4] line-through">₹{product?.product?.discountedPrice}</p>
+                <p className="text-3xl tracking-tight text-green-500 ">{product?.product?.discountPersent}%</p>
                 
               </div>
               {/* Reviews */}
@@ -151,18 +169,20 @@ export default function ProductDetails() {
                   </div>
               </div>
               <div className="space-y-6">
-                  <p className="text-base text-[#6b7280] font-semibold text-justify">{product.description}</p>
+                  <p className="text-base text-[#6b7280] font-semibold text-justify">{product?.product?.description}</p>
               </div>
 
-              <form className="mt-10">
+              <form className="mt-10" onSubmit={handleSubmit}>
                 {/* Colors */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">Color</h3>
-
-                  <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
+                  <div className='flex items-center gap-3'>
+                    <h3 className="text-2xl font-medium text-gray-900">Color:</h3>
+                    <p className="text-xl font-medium text-slate-400">{product?.product?.color}</p>
+                  </div>
+                  {/* <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
                     <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
                     <div className="flex items-center space-x-3">
-                      {product.colors.map((color) => (
+                      {productDetails.colors.map((color) => (
                         <RadioGroup.Option
                           key={color.name}
                           value={color}
@@ -188,7 +208,7 @@ export default function ProductDetails() {
                         </RadioGroup.Option>
                       ))}
                     </div>
-                  </RadioGroup>
+                  </RadioGroup> */}
                 </div>
 
                 {/* Sizes */}
@@ -203,14 +223,14 @@ export default function ProductDetails() {
                   <RadioGroup value={selectedSize} onChange={setSelectedSize} className="mt-4">
                     <RadioGroup.Label className="sr-only">Choose a size</RadioGroup.Label>
                     <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
-                      {product.sizes.map((size) => (
+                      {product?.product?.sizes.map((size) => (
                         <RadioGroup.Option
-                          key={size.name}
+                          key={size._id}
                           value={size}
-                          disabled={!size.inStock}
+                          disabled={size.quantity > 0}
                           className={({ active }) =>
                             classNames(
-                              size.inStock
+                              size.quantity
                                 ? 'cursor-pointer bg-white text-gray-900 shadow-sm'
                                 : 'cursor-not-allowed bg-gray-50 text-gray-200',
                               active ? 'ring-2 ring-indigo-500' : '',
@@ -221,7 +241,7 @@ export default function ProductDetails() {
                           {({ active, checked }) => (
                             <>
                               <RadioGroup.Label as="span">{size.name}</RadioGroup.Label>
-                              {size.inStock ? (
+                              {size.quantity ? (
                                 <span
                                   className={classNames(
                                     active ? 'border' : 'border-2',
@@ -273,7 +293,7 @@ export default function ProductDetails() {
 
                 <div className="mt-4">
                   <ul role="list" className="list-disc space-y-2 pl-4 text-sm">
-                    {product.highlights.map((highlight) => (
+                    {productDetails.highlights.map((highlight) => (
                       <li key={highlight} className="text-gray-400">
                         <span className="text-gray-600">{highlight}</span>
                       </li>
@@ -286,14 +306,13 @@ export default function ProductDetails() {
                 <h2 className="text-lg font-medium text-gray-900">Details</h2>
 
                 <div className="mt-4 space-y-6">
-                  <p className="text-sm text-gray-600">{product.details}</p>
+                  <p className="text-sm text-gray-600">{productDetails.details}</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
         {/* Need to implement ratings and reviews section below */}
-
         {/* Similar products section*/}
         <section className='pb-14 pt-4'>
           <h1 className='text-3xl text-gray-500 font-semibold'>Similar Products</h1>

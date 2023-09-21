@@ -8,11 +8,12 @@ import CheckOut from './Components/Checkout'
 import OrdersComponent from './Components/Orders'
 import OrderDetails from './Components/OrderDetails'
 import Toaster from './Components/Toaster/toaster'
+import { useSelector } from 'react-redux'
 
 function App() {
 
-
-
+  // const {auth} = useSelector(store => store);
+  // console.log("user information",auth?.user)
   return (
     <>
       <Navbar />
@@ -21,7 +22,7 @@ function App() {
           <Route path='/login' element={<HomePage />} />
           <Route path='/' element={<HomePage />} />
           <Route path='/register' element={<HomePage />} />
-          <Route path='/products' element={<Products />} />
+          <Route path='/:levelone/:leveltwo/:levelthree' element={<Products />} />
           <Route path='/products/:id' element={<ProductDetails />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/checkout' element={<CheckOut />} />

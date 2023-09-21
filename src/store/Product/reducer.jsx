@@ -12,7 +12,7 @@ export const customerProductReducer = (state=initialState,action) => {
         case FIND_PRODUCTS_REQUEST:
         case FIND_PRODUCT_BY_ID_REQUEST:
             return {...state, loading:true,error:null}
-        
+            
         case FIND_PRODUCTS_SUCCESS:
             return {...state,loading:false,products:action.payload,error:null}
         case FIND_PRODUCT_BY_ID_SUCCESS:

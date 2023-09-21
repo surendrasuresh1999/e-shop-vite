@@ -1,8 +1,7 @@
 import { CheckIcon } from '@heroicons/react/24/solid'
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState} from 'react';
+import {useSearchParams } from 'react-router-dom';
 
-import { useDispatch, useSelector } from 'react-redux';
 import AddressComponent from '../AddressCompnent';
 import OrderSummary from '../OrderSummary';
 // import { useHistory } from 'react-router-dom';
@@ -14,37 +13,22 @@ const steps = [
 ]
 
 export default function CheckOut() {
+const [searchParam,setSearchParam] = useSearchParams({step:2})
+const stepValue = searchParam.get("step")
 
-    const location = useLocation();
-    const dispatch = useDispatch();
-    // const history = useHistory();
-    const step = useSelector((state) => state.initialStep);
-
-    const searchParams = new URLSearchParams(location.search);
-    let initialActiveStep = searchParams.get('step');
-
-    const [activeStep, setActiveStep] = useState(initialActiveStep);
-
-
+  useEffect(() => {
+      setSearchParam({ step: stepValue });
+    }, [stepValue]);
+  
     const handleNextStepper = () => {
-        const nextStep = Number(activeStep) + 1;
-        initialActiveStep++
-        // dispatch(actions.Next())
-        setActiveStep(String(nextStep)); // Update the active step
-        // updateURL(nextStep);
+      const nextStep = Number(stepValue) + 1;
+      setSearchParam({ step: nextStep }); 
     }
-
+  
     const handleBackStepper = () => {
-        // dispatch(actions.Back())
-        const prevStep = Number(activeStep) - 1;
-        setActiveStep(String(prevStep)); // Update the active step
-        // updateURL(prevStep);
+      const prevStep = Number(stepValue) - 1;
+      setSearchParam({ step: prevStep }); 
     }
-    // const updateURL = (step) => {
-    //     const newSearchParams = new URLSearchParams(location.search);
-    //     newSearchParams.set('step', step);
-    //     history.push(`?${newSearchParams.toString()}`);
-    // }
 
 
   return (
@@ -53,7 +37,7 @@ export default function CheckOut() {
       <ol role="list" className="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
         {steps.map((step, stepIdx) => (
           <li key={step.name} className="relative md:flex md:flex-1">
-            {Number(activeStep) > step.stepNumber ? (
+            {Number(stepValue) > step.stepNumber ? (
               <a href={step.href} className="group flex w-full items-center">
                 <span className="flex items-center px-6 py-4 text-sm font-medium">
                   <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-800">
@@ -62,7 +46,7 @@ export default function CheckOut() {
                   <span className="ml-4 text-sm font-medium text-gray-900">{step.name}</span>
                 </span>
               </a>
-            ) : Number(activeStep) === step.stepNumber ? (
+            ) : Number(stepValue) === step.stepNumber ? (
               <a href={step.href} className="flex items-center px-6 py-4 text-sm font-medium" aria-current="step">
                 <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 border-indigo-600">
                   <span className="text-indigo-600">{step.id}</span>
@@ -105,8 +89,7 @@ export default function CheckOut() {
       </ol>
     </nav>
     <section>
-      <AddressComponent/>
-        {/* { step === 2 ? <AddressComponent/> : <OrderSummary /> } */}
+        { Number(stepValue) === 2 ? <AddressComponent /> : <OrderSummary /> }
     </section>
     <div className='flex gap-6'>
     <button
@@ -115,10 +98,10 @@ export default function CheckOut() {
         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Go Back
-      </button>
+      </button>      
       <button
         type="button"
-        onClick={()=>handleNextStepper()}
+        onClick={handleNextStepper}
         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Continute
